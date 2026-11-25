@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPrT Study Hub &amp; Flashcards — Pengganti NotebookLM (Offline)</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .study-nav { display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 22px; }
+    .study-tab { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-weight:600; cursor:pointer; font-size:0.92rem; transition:all .15s; }
+    .study-tab.is-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .study-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+    .study-search { flex:1; min-width:220px; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:0.95rem; }
+    .skill-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:14px; }
+    .skill-card.is-mastered { border-color:#16a34a; opacity:0.88; }
+    .skill-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+    .skill-badge { display:inline-block; font-size:0.75rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--accent-soft, rgba(185,28,28,0.12)); color:var(--accent); margin-right:8px; }
+    .skill-formula { margin:12px 0; font-size:0.93rem; line-height:1.6; white-space:pre-line; }
+    .skill-trap { background:rgba(245,158,11,0.12); border-left:3px solid #d97706; padding:10px 12px; border-radius:6px; font-size:0.9rem; margin:10px 0; }
+    .pair-grid { display:grid; gap:8px; margin:10px 0; }
+    .pair-wrong { background:rgba(220,38,38,0.09); border-left:3px solid #dc2626; padding:8px 12px; border-radius:6px; font-size:0.9rem; }
+    .pair-right { background:rgba(22,163,74,0.09); border-left:3px solid #16a34a; padding:8px 12px; border-radius:6px; font-size:0.9rem; }
+    .fc-strip { background:var(--surface-2, rgba(15,23,42,0.04)); border:1px dashed var(--border); padding:10px 12px; border-radius:8px; margin-top:10px; font-size:0.88rem; }
+    .flashcard-stage { max-width:720px; margin:0 auto; }
+    .flashcard-box { background:var(--surface); border:2px solid var(--border); border-radius:18px; padding:34px 28px; min-height:240px; display:flex; flex-direction:column; justify-content:center; cursor:pointer; text-align:center; transition:transform .15s, border-color .15s; }
+    .flashcard-box:hover { border-color:var(--accent); }
+    .flashcard-box.is-flipped { border-color:#16a34a; background:rgba(22,163,74,0.05); }
+    .fc-side-tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--muted); margin-bottom:12px; }
+    .fc-main-text { font-size:1.15rem; line-height:1.6; font-weight:600; }
+    .fc-controls { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
+    .study-table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; border:1px solid var(--border); font-size:0.9rem; }
+    .study-table th, .study-table td { padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+    .study-table th { background:var(--surface-2, rgba(15,23,42,0.05)); font-weight:700; }
+    .blur-recall .recall-hide { filter:blur(6px); transition:filter .15s; cursor:pointer; }
+    .blur-recall .recall-hide:hover, .blur-recall .recall-hide.is-revealed { filter:none; }
+    .mastery-bar { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand" style="text-decoration:none;color:inherit;">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">EPrT Study Hub &amp; Flashcards</span>
+          <span class="brand-sub">Belajar Offline Tanpa NotebookLM · 25 Skill + 100 Vocab + 45 Idiom</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <a href="index.html" class="btn btn-primary" style="text-decoration:none;padding:8px 14px;font-size:0.88rem;">⚡ Lanjut Latihan 300 Soal</a>
+        <button type="button" class="icon-btn" id="btn-theme"><span class="btn-label" id="theme-label">Gelap</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="dashboard-intro" style="margin-bottom:14px;">
+      <p class="eyebrow">Mode Belajar Kilat H-2 &amp; H-1 (Target Grammar 49 → 58+)</p>
+      <h1>Pelajari Pola EPrT + Flashcard Langsung di Browser</h1>
+      <p class="lead">Tandai skill yang sudah paham, uji refleks pakai Flashcard Flip, lalu klik tombol <strong>Lanjut Latihan 85 Soal</strong> di kanan atas untuk simulasi Multiple Choice ber-timer.</p>
+    </div>
+
+    <div class="study-nav" role="tablist">
+      <button type="button" class="study-tab is-active" data-tab="grammar">1. 25 Skill Grammar (Prioritas)</button>
+      <button type="button" class="study-tab" data-tab="flashcards">2. Flashcard Flip (Active Recall)</button>
+      <button type="button" class="study-tab" data-tab="vocab">3. 100 Vocab Akademik</button>
+      <button type="button" class="study-tab" data-tab="listening">4. Listening Traps &amp; 45 Idiom</button>
+      <button type="button" class="study-tab" data-tab="reading">5. 8 Tipe Soal Reading</button>
+    </div>
+
+    <!-- TAB 1: 25 GRAMMAR SKILLS -->
+    <section id="panel-grammar" class="study-panel">
+      <div class="mastery-bar">
+        <div><strong>Progres Penguasaan Grammar:</strong> <span id="grammar-mastery-text">0 / 25 Skill dikuasai</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-ghost" id="btn-filter-all">Semua (25)</button>
+          <button type="button" class="btn btn-ghost" id="btn-filter-unmastered">Belum Paham Saja</button>
+        </div>
+      </div>
+      <div class="study-toolbar">
+        <input type="search" class="study-search" id="search-grammar" placeholder="Cari pola grammar... (misal: inversion, despite, subjunctive, parallel, amount)">
+      </div>
+      <div id="grammar-list"></div>
+    </section>
+
+    <!-- TAB 2: FLASHCARDS -->
+    <section id="panel-flashcards" class="study-panel" hidden>
+      <div class="flashcard-stage">
+        <div class="study-toolbar" style="justify-content:center;">
+          <button type="button" class="btn btn-ghost fc-deck-btn is-active" data-deck="grammar">Deck Grammar (25)</button>
+          <button type="button" class="btn btn-ghost fc-deck-btn" data-deck="idioms">Deck Idiom Listening (45)</button>
+          <button type="button" class="btn btn-ghost fc-deck-btn" data-deck="vocab">Deck Vocab Akademik (100)</button>
+          <button type="button" class="btn btn-ghost" id="btn-fc-shuffle">Acak Urutan</button>
+        </div>
+        <div style="text-align:center;margin-bottom:10px;font-size:0.9rem;color:var(--muted);" id="fc-counter">Kartu 1 / 25</div>
+        <div class="flashcard-box" id="fc-card" tabindex="0" role="button" aria-label="Klik untuk membalik kartu">
+          <div class="fc-side-tag" id="fc-side-tag">PERTANYAAN (Klik / Spasi untuk balik)</div>
+          <div class="fc-main-text" id="fc-text"></div>
+        </div>
+        <div class="fc-controls">
+          <button type="button" class="btn btn-ghost" id="btn-fc-prev">← Sebelumnya</button>
+          <button type="button" class="btn btn-primary" id="btn-fc-flip">Balik Kartu (Spasi)</button>
+          <button type="button" class="btn btn-ghost" id="btn-fc-next">Berikutnya →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: 100 VOCAB -->
+    <section id="panel-vocab" class="study-panel" hidden>
+      <div class="study-toolbar">
+        <input type="search" class="study-search" id="search-vocab" placeholder="Cari kata akademik / sinonim / arti Indonesia...">
+        <button type="button" class="btn btn-ghost" id="btn-toggle-vocab-blur">Sembunyikan Arti (Mode Uji)</button>
+      </div>
+      <div id="vocab-wrap"></div>
+    </section>
+
+    <!-- TAB 4: LISTENING TRAPS & 45 IDIOMS -->
+    <section id="panel-listening" class="study-panel" hidden>
+      <h2 style="margin-bottom:10px;">12 Jebakan Klasik Listening Part A</h2>
+      <div id="traps-wrap" style="margin-bottom:26px;"></div>
+      <div class="study-toolbar">
+        <h2 style="margin:0;margin-right:auto;">45 Idiom &amp; Phrasal Verbs Wajib</h2>
+        <input type="search" class="study-search" id="search-idiom" placeholder="Cari idiom (misal: call off, put off, under the weather)...">
+        <button type="button" class="btn btn-ghost" id="btn-toggle-idiom-blur">Sembunyikan Arti</button>
+      </div>
+      <div id="idioms-wrap"></div>
+    </section>
+
+    <!-- TAB 5: 8 READING TYPES -->
+    <section id="panel-reading" class="study-panel" hidden>
+      <div class="mastery-bar">
+        <div><strong>Aturan Emas Pacing Reading:</strong> 50 soal / 55 menit = <strong>maksimal 11 menit per teks</strong> (1 menit skim kalimat pertama tiap paragraf + 9 menit tembak detail berurutan + 1 menit Main Idea).</div>
+      </div>
+      <div id="reading-list"></div>
+    </section>
+  </main>
+
+  <script src="study_data.js"></script>
+  <script>
+    (function () {
+      const DATA = window.EPRT_STUDY_DATA;
+      const STORE_KEY = 'eprt_study_mastered_v1';
+      let mastered = new Set(JSON.parse(localStorage.getItem(STORE_KEY) || '[]'));
+      let grammarFilter = 'all';
+
+      // Theme sync with index.html
+      const savedTheme = localStorage.getItem('eprt_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      const themeLabel = document.getElementById('theme-label');
+      const syncThemeLabel = () => {
+        const cur = document.documentElement.getAttribute('data-theme');
+        themeLabel.textContent = cur === 'dark' ? 'Terang' : 'Gelap';
+      };
+      syncThemeLabel();
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('eprt_theme', next);
+        syncThemeLabel();
+      });
+
+      // Tabs
+      document.querySelectorAll('.study-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.study-tab').forEach(b => b.classList.remove('is-active'));
+          document.querySelectorAll('.study-panel').forEach(p => p.hidden = true);
+          btn.classList.add('is-active');
+          document.getElementById('panel-' + btn.dataset.tab).hidden = false;
+        });
+      });
+
+      const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const mdInline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');
+
+      // Render Grammar
+      function renderGrammar() {
+        const q = document.getElementById('search-grammar').value.toLowerCase().trim();
+        document.getElementById('grammar-mastery-text').textContent = `${mastered.size} / ${DATA.skills.length} Skill dikuasai`;
+        const list = document.getElementById('grammar-list');
+        const filtered = DATA.skills.filter(sk => {
+          if (grammarFilter === 'unmastered' && mastered.has(sk.id)) return false;
+          if (!q) return true;
+          return (sk.title + ' ' + sk.formula + ' ' + sk.trap + ' ' + sk.flashcardQ).toLowerCase().includes(q);
+        });
+        list.innerHTML = filtered.map(sk => {
+          const isDone = mastered.has(sk.id);
+          const pairsHtml = sk.pairs.map(p => `
+            <div class="pair-wrong"><strong>SALAH:</strong> ${mdInline(p.wrong)}</div>
+            <div class="pair-right"><strong>BENAR:</strong> ${mdInline(p.right)}</div>
+          `).join('');
+          return `
+            <article class="skill-card ${isDone ? 'is-mastered' : ''}">
+              <div class="skill-head">
+                <div>
+                  <span class="skill-badge">SKILL ${String(sk.num).padStart(2,'0')}</span>
+                  <span style="font-size:0.78rem;color:var(--muted);">${esc(sk.freq)}</span>
+                  <h3 style="margin:6px 0 0;">${esc(sk.title)}</h3>
+                </div>
+                <button type="button" class="btn ${isDone ? 'btn-primary' : 'btn-ghost'}" data-toggle-skill="${sk.id}">
+                  ${isDone ? '✓ Sudah Paham' : 'Tandai Paham'}
+                </button>
+              </div>
+              <div class="skill-formula">${mdInline(sk.formula)}</div>
+              ${sk.trap ? `<div class="skill-trap"><strong>Jebakan Klasik EPrT:</strong> ${mdInline(sk.trap)}</div>` : ''}
+              <div class="pair-grid">${pairsHtml}</div>
+              ${sk.flashcardQ ? `<div class="fc-strip"><strong>Flashcard Q:</strong> ${mdInline(sk.flashcardQ)}<br><strong>A:</strong> ${mdInline(sk.flashcardA)}</div>` : ''}
+            </article>
+          `;
+        }).join('') || '<p style="color:var(--muted);">Tidak ada skill yang cocok dengan filter.</p>';
+
+        list.querySelectorAll('[data-toggle-skill]').forEach(b => {
+          b.addEventListener('click', () => {
+            const id = b.dataset.toggleSkill;
+            if (mastered.has(id)) mastered.delete(id); else mastered.add(id);
+            localStorage.setItem(STORE_KEY, JSON.stringify([...mastered]));
+            renderGrammar();
+          });
+        });
+      }
+      document.getElementById('search-grammar').addEventListener('input', renderGrammar);
+      document.getElementById('btn-filter-all').addEventListener('click', () => { grammarFilter = 'all'; renderGrammar(); });
+      document.getElementById('btn-filter-unmastered').addEventListener('click', () => { grammarFilter = 'unmastered'; renderGrammar(); });
+      renderGrammar();
+
+      // Flashcards
+      let currentDeckName = 'grammar';
+      let deck = [];
+      let fcIdx = 0;
+      let fcFlipped = false;
+
+      function buildDeck(name) {
+        currentDeckName = name;
+        if (name === 'grammar') {
+          deck = DATA.skills.map(s => ({ tag: `SKILL ${String(s.num).padStart(2,'0')} · ${s.title}`, q: s.flashcardQ, a: s.flashcardA }));
+        } else if (name === 'idioms') {
+          deck = DATA.idioms.map(i => ({ tag: `IDIOM #${i.num}`, q: `Apa arti idiom "${i.idiom}"?\n\nContoh: ${i.clue}`, a: `${i.english} (${i.indonesian})` }));
+        } else {
+          deck = DATA.vocab.map(v => ({ tag: `VOCAB #${v.num} (${v.pos})`, q: `Sinonim & arti kata akademik: "${v.word}"`, a: `${v.synonyms}\n\nArti: ${v.meaning}` }));
+        }
+        fcIdx = 0;
+        fcFlipped = false;
+        renderFlashcard();
+      }
+      function renderFlashcard() {
+        const card = deck[fcIdx];
+        document.getElementById('fc-counter').textContent = `Kartu ${fcIdx + 1} / ${deck.length} — ${card.tag}`;
+        const box = document.getElementById('fc-card');
+        box.classList.toggle('is-flipped', fcFlipped);
+        document.getElementById('fc-side-tag').textContent = fcFlipped ? 'JAWABAN' : 'PERTANYAAN (Klik atau tekan Spasi untuk balik)';
+        document.getElementById('fc-text').innerHTML = mdInline(fcFlipped ? card.a : card.q).replace(/\n/g, '<br>');
+      }
+      document.querySelectorAll('.fc-deck-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.fc-deck-btn').forEach(x => x.classList.remove('btn-primary'));
+          b.classList.add('btn-primary');
+          buildDeck(b.dataset.deck);
+        });
+      });
+      document.getElementById('fc-card').addEventListener('click', () => { fcFlipped = !fcFlipped; renderFlashcard(); });
+      document.getElementById('btn-fc-flip').addEventListener('click', () => { fcFlipped = !fcFlipped; renderFlashcard(); });
+      document.getElementById('btn-fc-prev').addEventListener('click', () => { fcIdx = (fcIdx - 1 + deck.length) % deck.length; fcFlipped = false; renderFlashcard(); });
+      document.getElementById('btn-fc-next').addEventListener('click', () => { fcIdx = (fcIdx + 1) % deck.length; fcFlipped = false; renderFlashcard(); });
+      document.getElementById('btn-fc-shuffle').addEventListener('click', () => {
+        for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+        fcIdx = 0; fcFlipped = false; renderFlashcard();
+      });
+      document.addEventListener('keydown', e => {
+        if (document.getElementById('panel-flashcards').hidden) return;
+        if (e.code === 'Space') { e.preventDefault(); fcFlipped = !fcFlipped; renderFlashcard(); }
+        if (e.code === 'ArrowRight') { fcIdx = (fcIdx + 1) % deck.length; fcFlipped = false; renderFlashcard(); }
+        if (e.code === 'ArrowLeft') { fcIdx = (fcIdx - 1 + deck.length) % deck.length; fcFlipped = false; renderFlashcard(); }
+      });
+      buildDeck('grammar');
+
+      // Vocab table
+      function renderVocab() {
+        const q = document.getElementById('search-vocab').value.toLowerCase().trim();
+        const rows = DATA.vocab.filter(v => !q || (v.word + ' ' + v.synonyms + ' ' + v.meaning).toLowerCase().includes(q));
+        document.getElementById('vocab-wrap').innerHTML = `
+          <table class="study-table">
+            <thead><tr><th>#</th><th>Academic Word</th><th>POS</th><th>TOEFL Synonyms</th><th>Arti Indonesia</th></tr></thead>
+            <tbody>${rows.map(v => `<tr><td>${v.num}</td><td><strong>${esc(v.word)}</strong></td><td>${esc(v.pos)}</td><td class="recall-hide">${esc(v.synonyms)}</td><td class="recall-hide">${esc(v.meaning)}</td></tr>`).join('')}</tbody>
+          </table>`;
+      }
+      document.getElementById('search-vocab').addEventListener('input', renderVocab);
+      document.getElementById('btn-toggle-vocab-blur').addEventListener('click', e => {
+        const w = document.getElementById('vocab-wrap');
+        w.classList.toggle('blur-recall');
+        e.target.textContent = w.classList.contains('blur-recall') ? 'Tampilkan Arti' : 'Sembunyikan Arti (Mode Uji)';
+      });
+      renderVocab();
+
+      // Listening Traps + 45 Idioms
+      document.getElementById('traps-wrap').innerHTML = `
+        <table class="study-table">
+          <thead><tr><th>#</th><th>Tipe Jebakan</th><th>Contoh Dialog</th><th>Kunci Logika</th></tr></thead>
+          <tbody>${DATA.listeningTraps.map(t => `<tr><td>${t.num}</td><td><strong>${esc(t.type)}</strong></td><td>${mdInline(t.dialogue)}</td><td>${mdInline(t.logic)}</td></tr>`).join('')}</tbody>
+        </table>`;
+      function renderIdioms() {
+        const q = document.getElementById('search-idiom').value.toLowerCase().trim();
+        const rows = DATA.idioms.filter(i => !q || (i.idiom + ' ' + i.english + ' ' + i.indonesian).toLowerCase().includes(q));
+        document.getElementById('idioms-wrap').innerHTML = `
+          <table class="study-table">
+            <thead><tr><th>#</th><th>Idiom / Phrasal Verb</th><th>Arti English</th><th>Arti Indonesia</th><th>Contoh Kalimat</th></tr></thead>
+            <tbody>${rows.map(i => `<tr><td>${i.num}</td><td><strong>${esc(i.idiom)}</strong></td><td class="recall-hide">${esc(i.english)}</td><td class="recall-hide">${esc(i.indonesian)}</td><td>${mdInline(i.clue)}</td></tr>`).join('')}</tbody>
+          </table>`;
+      }
+      document.getElementById('search-idiom').addEventListener('input', renderIdioms);
+      document.getElementById('btn-toggle-idiom-blur').addEventListener('click', e => {
+        const w = document.getElementById('idioms-wrap');
+        w.classList.toggle('blur-recall');
+        e.target.textContent = w.classList.contains('blur-recall') ? 'Tampilkan Arti' : 'Sembunyikan Arti';
+      });
+      renderIdioms();
+
+      // 8 Reading Types
+      document.getElementById('reading-list').innerHTML = DATA.readingTypes.map(r => `
+        <article class="skill-card">
+          <span class="skill-badge">TIPE ${r.num}</span>
+          <h3 style="margin:6px 0 8px;">${esc(r.title)}</h3>
+          <div class="skill-formula">${mdInline(r.body)}</div>
+        </article>`).join('');
+    })();
+  </script>
+</body>
+</html>

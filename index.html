@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPrT Tel-U Prep Arena — Grammar, Reading &amp; Listening</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Quiet Navigation Shell -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button type="button" class="brand" id="btn-brand-home" aria-label="Kembali ke beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+            <path d="M8 7h8"></path>
+            <path d="M8 11h6"></path>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">EPrT Prep Arena</span>
+          <span class="brand-sub" id="brand-sub-count">Telkom University · 85 Soal Terverifikasi</span>
+        </span>
+      </button>
+
+      <div class="topbar-actions">
+        <a href="study.html" class="icon-btn" style="text-decoration:none;" title="Buka materi 25 Skill Grammar &amp; Flashcards offline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+          <span class="btn-label">Materi &amp; Flashcards</span>
+        </a>
+        <span class="saved-indicator" id="saved-indicator" hidden>Progres tersimpan</span>
+        <button type="button" class="icon-btn" id="btn-theme" title="Ganti tema terang/gelap" aria-label="Ganti tema terang atau gelap">
+          <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+          <span class="btn-label" id="theme-label">Gelap</span>
+        </button>
+        <button type="button" class="icon-btn icon-btn-muted" id="btn-reset-progress" title="Hapus semua progres tersimpan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span class="btn-label">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- ==================== VIEW 1: HOME DASHBOARD ==================== -->
+    <section id="view-home" class="view">
+      <div class="dashboard-header">
+        <div class="dashboard-intro">
+          <p class="eyebrow">Simulasi Sprint H-2 &amp; H-1 EPrT</p>
+          <h1>Latihan 3 Tipe EPrT Berwaktu dengan Estimasi Skor Scaled</h1>
+          <p class="lead">Dirancang untuk melatih kecepatan dan akurasi tepat setelah sesi review NotebookLM. Semua progres dan analisis pola kesalahan tersimpan otomatis di browser ini.</p>
+        </div>
+
+        <!-- Score Projection Card (The Visual Moment of the Dashboard) -->
+        <aside class="score-overview-card" aria-label="Proyeksi skor EPrT">
+          <div class="score-overview-top">
+            <div>
+              <p class="meta-label">Proyeksi skor gabungan EPrT</p>
+              <div class="projected-row">
+                <span class="projected-value tabular" id="dash-projected-total">527</span>
+                <span class="delta-pill" id="dash-projected-delta">Baseline 2023</span>
+              </div>
+            </div>
+            <div class="cefr-badge" id="dash-cefr-badge">CEFR B1</div>
+          </div>
+
+          <div class="section-mini-grid">
+            <div class="section-mini-item">
+              <span class="mini-label">Listening</span>
+              <span class="mini-score tabular" id="dash-score-listening">56</span>
+              <span class="mini-src" id="dash-src-listening">Baseline 2023</span>
+            </div>
+            <div class="section-mini-item is-priority">
+              <span class="mini-label">Grammar</span>
+              <span class="mini-score tabular" id="dash-score-grammar">49</span>
+              <span class="mini-src" id="dash-src-grammar">Target utama</span>
+            </div>
+            <div class="section-mini-item">
+              <span class="mini-label">Reading</span>
+              <span class="mini-score tabular" id="dash-score-reading">53</span>
+              <span class="mini-src" id="dash-src-reading">Baseline 2023</span>
+            </div>
+          </div>
+
+          <div class="target-bar-wrap">
+            <div class="target-bar-labels">
+              <span>Progres menuju target 650 (CEFR C1)</span>
+              <span class="tabular" id="dash-target-gap">Butuh +123 poin</span>
+            </div>
+            <div class="target-bar-track">
+              <div class="target-bar-fill" id="dash-target-fill" style="width: 59.1%"></div>
+              <div class="target-bar-marker" style="left: 92.6%" title="Target C1 650"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- 3 Quiz Mode Cards -->
+      <div class="mode-grid">
+        <!-- TIPE 1: GRAMMAR BLITZ -->
+        <article class="mode-card mode-card-priority" data-section="grammar">
+          <div class="mode-card-head">
+            <div class="mode-tag-row">
+              <span class="mode-number">Tipe 1</span>
+              <span class="priority-pill">Prioritas Tambal Skor 49</span>
+            </div>
+            <h2>Grammar Blitz</h2>
+            <p class="mode-desc">Latihan acak anti-hafalan Section 2 EPrT: Structure (isi rumpang) dan Written Expression (temukan bagian salah bergaris bawah) dengan opsi teracak tiap sesi.</p>
+          </div>
+
+          <div class="mode-meta-list">
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span id="meta-count-grammar">Bank 40 soal · 15S + 25WE</span>
+            </div>
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>37 dtk/soal atau Ujian</span>
+            </div>
+          </div>
+
+          <div class="bank-status-bar" id="bank-status-grammar">
+            <div class="bank-status-top">
+              <span class="bank-status-text">Bank: 40 Soal · Sisa Belum Dikerjakan: 40</span>
+              <span class="bank-status-pct tabular">0%</span>
+            </div>
+            <div class="bank-status-track"><div class="bank-status-fill" style="width: 0%"></div></div>
+          </div>
+
+          <div class="selector-group">
+            <div class="mode-selector" role="radiogroup" aria-label="Ukuran sesi Grammar">
+              <button type="button" class="seg-btn is-active" data-size-section="grammar" data-size="standard">Sesi 40 Soal (Acak Baru)</button>
+              <button type="button" class="seg-btn" data-size-section="grammar" data-size="marathon" id="size-marathon-grammar">Marathon 40 Soal</button>
+            </div>
+            <div class="mode-selector" role="radiogroup" aria-label="Mode waktu Grammar">
+              <button type="button" class="seg-btn is-active" data-section="grammar" data-timer="blitz">Blitz 37 dtk/soal</button>
+              <button type="button" class="seg-btn" data-section="grammar" data-timer="exam">Ujian 25 menit</button>
+            </div>
+          </div>
+
+          <div class="mode-progress-box" id="progress-grammar">
+            <span class="muted-note">Belum dikerjakan</span>
+          </div>
+
+          <div class="mode-actions">
+            <button type="button" class="btn btn-primary" data-start="grammar">Mulai Grammar Blitz</button>
+            <button type="button" class="btn btn-ghost" data-retry-missed="grammar" id="btn-home-retry-grammar" hidden>Ulangi Salah</button>
+          </div>
+        </article>
+
+        <!-- TIPE 2: READING MASTERY SPRINT -->
+        <article class="mode-card" data-section="reading">
+          <div class="mode-card-head">
+            <div class="mode-tag-row">
+              <span class="mode-number">Tipe 2</span>
+              <span class="quiet-pill">Split-Pane Teks</span>
+            </div>
+            <h2>Reading Mastery Sprint</h2>
+            <p class="mode-desc">Teks akademik bernomor paragraf lintas disiplin ilmu. Setiap sesi mengundi teks baru yang belum dikerjakan lengkap dengan pengacakan opsi A–D.</p>
+          </div>
+
+          <div class="mode-meta-list">
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span id="meta-count-reading">Bank 3 teks · 25 soal</span>
+            </div>
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>65 dtk/soal atau Ujian</span>
+            </div>
+          </div>
+
+          <div class="bank-status-bar" id="bank-status-reading">
+            <div class="bank-status-top">
+              <span class="bank-status-text">Bank: 25 Soal · Sisa Belum Dikerjakan: 25</span>
+              <span class="bank-status-pct tabular">0%</span>
+            </div>
+            <div class="bank-status-track"><div class="bank-status-fill" style="width: 0%"></div></div>
+          </div>
+
+          <div class="selector-group">
+            <div class="mode-selector" role="radiogroup" aria-label="Ukuran sesi Reading">
+              <button type="button" class="seg-btn is-active" data-size-section="reading" data-size="standard">Sesi 3 Teks (~25 Soal)</button>
+              <button type="button" class="seg-btn" data-size-section="reading" data-size="marathon" id="size-marathon-reading">Marathon 3 Teks (25 Soal)</button>
+            </div>
+            <div class="mode-selector" role="radiogroup" aria-label="Mode waktu Reading">
+              <button type="button" class="seg-btn is-active" data-section="reading" data-timer="blitz">Sprint 65 dtk/soal</button>
+              <button type="button" class="seg-btn" data-section="reading" data-timer="exam">Ujian 28 menit</button>
+            </div>
+          </div>
+
+          <div class="mode-progress-box" id="progress-reading">
+            <span class="muted-note">Belum dikerjakan</span>
+          </div>
+
+          <div class="mode-actions">
+            <button type="button" class="btn btn-primary" data-start="reading">Mulai Reading Sprint</button>
+            <button type="button" class="btn btn-ghost" data-retry-missed="reading" id="btn-home-retry-reading" hidden>Ulangi Salah</button>
+          </div>
+        </article>
+
+        <!-- TIPE 3: LISTENING TRAP ARENA -->
+        <article class="mode-card" data-section="listening">
+          <div class="mode-card-head">
+            <div class="mode-tag-row">
+              <span class="mode-number">Tipe 3</span>
+              <span class="quiet-pill">Audio Web Speech</span>
+            </div>
+            <h2>Listening Trap Arena</h2>
+            <p class="mode-desc">Part A (dialog pendek), Part B (dialog kampus), dan Part C (kuliah akademik) dengan pemutar suara berbeda tiap pembicara dan undian acak baru tiap sesi.</p>
+          </div>
+
+          <div class="mode-meta-list">
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              <span id="meta-count-listening">Bank 20 soal · Part A, B, C</span>
+            </div>
+            <div class="meta-chip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>45 dtk/soal atau bebas</span>
+            </div>
+          </div>
+
+          <div class="bank-status-bar" id="bank-status-listening">
+            <div class="bank-status-top">
+              <span class="bank-status-text">Bank: 20 Soal · Sisa Belum Dikerjakan: 20</span>
+              <span class="bank-status-pct tabular">0%</span>
+            </div>
+            <div class="bank-status-track"><div class="bank-status-fill" style="width: 0%"></div></div>
+          </div>
+
+          <div class="selector-group">
+            <div class="mode-selector" role="radiogroup" aria-label="Ukuran sesi Listening">
+              <button type="button" class="seg-btn is-active" data-size-section="listening" data-size="standard">Sesi 20 Soal (Acak Baru)</button>
+              <button type="button" class="seg-btn" data-size-section="listening" data-size="marathon" id="size-marathon-listening">Marathon 20 Soal</button>
+            </div>
+            <div class="mode-selector" role="radiogroup" aria-label="Mode waktu Listening">
+              <button type="button" class="seg-btn is-active" data-section="listening" data-timer="blitz">Blitz 45 dtk/soal</button>
+              <button type="button" class="seg-btn" data-section="listening" data-timer="untimed">Tanpa batas waktu</button>
+            </div>
+          </div>
+
+          <div class="mode-progress-box" id="progress-listening">
+            <span class="muted-note">Belum dikerjakan</span>
+          </div>
+
+          <div class="mode-actions">
+            <button type="button" class="btn btn-primary" data-start="listening">Mulai Listening Arena</button>
+            <button type="button" class="btn btn-ghost" data-retry-missed="listening" id="btn-home-retry-listening" hidden>Ulangi Salah</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Keyboard & Offline Usage Tip Strip -->
+      <div class="shortcut-strip">
+        <div class="shortcut-item"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <span>Pilih opsi A–D</span></div>
+        <div class="shortcut-item"><kbd>Enter</kbd> <span>Lanjut soal berikutnya</span></div>
+        <div class="shortcut-item"><kbd>Space</kbd> <span>Putar atau jeda audio Listening</span></div>
+        <div class="shortcut-item"><span class="dot-offline"></span> <span>100% offline — acak soal &amp; opsi otomatis</span></div>
+        <button type="button" class="btn-reset-bank" id="btn-reset-bank" title="Reset daftar soal yang sudah pernah dikerjakan tanpa menghapus skor">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Reset Riwayat Bank</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: ACTIVE QUIZ ARENA ==================== -->
+    <section id="view-quiz" class="view" hidden>
+      <!-- Sticky Quiz HUD -->
+      <div class="quiz-hud">
+        <div class="hud-left">
+          <button type="button" class="btn-back" id="btn-quiz-exit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            <span>Keluar</span>
+          </button>
+          <div class="hud-title-group">
+            <span class="hud-quiz-name" id="hud-quiz-name">Grammar Blitz</span>
+            <span class="hud-q-counter tabular" id="hud-q-counter">Soal 1 / 40</span>
+          </div>
+        </div>
+
+        <div class="hud-metrics">
+          <!-- Streak -->
+          <div class="hud-pill" id="hud-streak-pill" title="Jawaban benar beruntun">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+            <span class="tabular" id="hud-streak">0</span>
+          </div>
+
+          <!-- Accuracy Ring -->
+          <div class="hud-accuracy" title="Akurasi saat ini">
+            <svg class="mini-ring" width="32" height="32" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="ring-track" cx="18" cy="18" r="14"></circle>
+              <circle class="ring-fill" id="hud-ring-fill" cx="18" cy="18" r="14" stroke-dasharray="87.96" stroke-dashoffset="87.96"></circle>
+            </svg>
+            <span class="tabular" id="hud-accuracy-text">0%</span>
+          </div>
+
+          <!-- Countdown Timer -->
+          <div class="hud-timer" id="hud-timer-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="tabular" id="hud-timer-text">00:37</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smooth Countdown / Question Progress Bar -->
+      <div class="progress-rail">
+        <div class="progress-rail-fill" id="quiz-progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="timer-rail" id="timer-rail">
+        <div class="timer-rail-fill" id="quiz-timer-fill" style="width: 100%"></div>
+      </div>
+
+      <!-- Workspace Layout: Single Column (Grammar/Listening) OR Split Pane (Reading) -->
+      <div class="arena-layout" id="arena-layout">
+        <!-- LEFT PANE: READING PASSAGE BOOKLET (Shown only in Reading) -->
+        <aside class="passage-pane" id="passage-pane" hidden>
+          <div class="passage-header">
+            <div>
+              <span class="passage-category" id="passage-category">Technology</span>
+              <h2 class="passage-title" id="passage-title">Passage Title</h2>
+            </div>
+            <div class="passage-tools">
+              <span class="passage-wordcount tabular" id="passage-wordcount">237 kata</span>
+              <button type="button" class="font-size-btn" id="btn-font-dec" title="Perkecil huruf teks">A-</button>
+              <button type="button" class="font-size-btn" id="btn-font-inc" title="Perbesar huruf teks">A+</button>
+            </div>
+          </div>
+          <div class="passage-body" id="passage-body"></div>
+        </aside>
+
+        <!-- RIGHT / MAIN PANE: QUESTION + AUDIO + OPTIONS + FEEDBACK -->
+        <div class="question-pane">
+          <article class="question-card">
+            <div class="q-meta-bar">
+              <span class="q-badge" id="q-subtype-badge">Structure</span>
+              <span class="q-pattern-tag" id="q-pattern-hint">Tebak pola soal</span>
+              <span class="q-id tabular" id="q-id-label">G01</span>
+            </div>
+
+            <!-- LISTENING STUDIO AUDIO PLAYER (Shown only in Listening) -->
+            <div class="audio-studio" id="audio-studio" hidden>
+              <div class="audio-studio-top">
+                <div class="audio-title-wrap">
+                  <span class="audio-part-label" id="audio-part-label">Part A · Short Dialogue</span>
+                  <div class="speaker-pills" id="speaker-pills">
+                    <span class="speaker-pill" data-speaker="Man">Man</span>
+                    <span class="speaker-pill" data-speaker="Woman">Woman</span>
+                    <span class="speaker-pill" data-speaker="Narrator">Narrator</span>
+                  </div>
+                </div>
+                <div class="waveform" id="audio-waveform" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <div class="audio-controls">
+                <button type="button" class="btn btn-audio-play" id="btn-audio-play">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                  <span id="audio-play-label">Putar Audio</span>
+                </button>
+                <button type="button" class="btn btn-audio-sec" id="btn-audio-replay" title="Putar ulang dari awal">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  <span>Ulangi</span>
+                </button>
+                <button type="button" class="btn btn-audio-sec" id="btn-audio-qonly" hidden title="Putar pertanyaan narator saja">
+                  <span>Pertanyaan Saja</span>
+                </button>
+
+                <div class="speed-group" role="group" aria-label="Kecepatan suara">
+                  <button type="button" class="speed-btn" data-rate="0.9">0.9x</button>
+                  <button type="button" class="speed-btn is-active" data-rate="1.0">1.0x</button>
+                  <button type="button" class="speed-btn" data-rate="1.15">1.15x</button>
+                </div>
+
+                <button type="button" class="btn btn-script-toggle" id="btn-toggle-script">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span id="script-toggle-label">Tampilkan Script</span>
+                </button>
+              </div>
+
+              <p class="audio-status-line" id="audio-status-line">Klik Putar Audio atau tekan Space untuk mendengarkan percakapan.</p>
+
+              <!-- Script Box (Hidden during question by default, auto-revealed on answer) -->
+              <div class="script-box" id="script-box" hidden></div>
+            </div>
+
+            <!-- Question Stem -->
+            <p class="q-instruction" id="q-instruction"></p>
+            <div class="q-stem" id="q-stem"></div>
+
+            <!-- 4 Quizizz-Style Answer Tiles -->
+            <div class="options-grid" id="options-grid"></div>
+
+            <!-- Instant Feedback & Explanation Banner -->
+            <div class="feedback-banner" id="feedback-banner" hidden>
+              <div class="feedback-head">
+                <div class="feedback-status-wrap">
+                  <span class="feedback-status" id="feedback-status">Benar</span>
+                  <span class="feedback-pattern" id="feedback-pattern">Subject-Verb Agreement</span>
+                </div>
+                <span class="feedback-correction" id="feedback-correction" hidden></span>
+              </div>
+              <p class="feedback-text" id="feedback-text"></p>
+              <div class="feedback-footer">
+                <span class="kbd-hint">Tekan <kbd>Enter</kbd> untuk lanjut</span>
+                <button type="button" class="btn btn-primary" id="btn-next-q">
+                  <span id="btn-next-label">Soal Berikutnya</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: EPrT SCORE REPORT ==================== -->
+    <section id="view-report" class="view" hidden>
+      <div class="report-top">
+        <div>
+          <p class="eyebrow" id="report-eyebrow">Laporan Hasil Simulasi</p>
+          <h1 id="report-title">Grammar Blitz Selesai</h1>
+        </div>
+        <div class="report-actions-top">
+          <button type="button" class="btn btn-primary" id="btn-retry-missed" hidden>
+            Ulangi Soal Salah Saja (<span id="retry-missed-count">0</span>)
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-retry-all">Kerjakan Ulang / Sesi Baru</button>
+          <button type="button" class="btn btn-ghost" id="btn-report-home">Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Score Summary Grid -->
+      <div class="report-grid">
+        <!-- Card 1: Accuracy Ring + Raw Score -->
+        <div class="report-card report-card-ring">
+          <svg class="big-ring" width="124" height="124" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="big-ring-track" cx="60" cy="60" r="50"></circle>
+            <circle class="big-ring-fill" id="report-ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+          </svg>
+          <div class="ring-center-text">
+            <span class="ring-pct tabular" id="report-pct">0%</span>
+            <span class="ring-raw tabular" id="report-raw">0 / 40</span>
+          </div>
+          <div class="report-substats">
+            <div><span class="substat-label">Best Streak</span><strong class="tabular" id="report-streak">0</strong></div>
+            <div><span class="substat-label">Rata-rata</span><strong class="tabular" id="report-avg-time">0 dtk</strong></div>
+            <div><span class="substat-label">Salah</span><strong class="tabular" id="report-wrong">0</strong></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Section Scaled Score -->
+        <div class="report-card">
+          <p class="meta-label">Estimasi skor scaled sesi ini</p>
+          <div class="scaled-hero-row">
+            <span class="scaled-hero-num tabular" id="report-scaled">49</span>
+            <span class="scaled-range">/ 68</span>
+          </div>
+          <p class="delta-line" id="report-section-delta">Dibanding baseline 2023 (49)</p>
+          <p class="report-note" id="report-section-note"></p>
+        </div>
+
+        <!-- Card 3: Combined Projected EPrT Score -->
+        <div class="report-card report-card-projected">
+          <div class="projected-card-head">
+            <p class="meta-label">Proyeksi skor EPrT gabungan</p>
+            <span class="cefr-badge" id="report-cefr">CEFR B2</span>
+          </div>
+          <div class="scaled-hero-row">
+            <span class="scaled-hero-num tabular" id="report-combined-total">560</span>
+            <span class="delta-pill" id="report-combined-delta">+33 vs 527</span>
+          </div>
+          <div class="combined-breakdown" id="report-combined-breakdown"></div>
+        </div>
+      </div>
+
+      <!-- Weak Pattern Breakdown -->
+      <section class="report-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Analisis Pola Soal &amp; Titik Lemah</h2>
+            <p class="panel-sub">Diurutkan dari pola dengan tingkat kesalahan tertinggi agar fokus review NotebookLM tepat sasaran.</p>
+          </div>
+        </div>
+        <div class="pattern-list" id="report-pattern-list"></div>
+      </section>
+
+      <!-- Detailed Question Review -->
+      <section class="report-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Pembahasan Detail Jawaban</h2>
+            <p class="panel-sub">Periksa kembali jawaban dan pola jebakan setiap soal.</p>
+          </div>
+          <div class="filter-tabs" role="tablist">
+            <button type="button" class="filter-tab is-active" data-review-filter="wrong">Salah Saja</button>
+            <button type="button" class="filter-tab" data-review-filter="all">Semua Soal</button>
+          </div>
+        </div>
+        <div class="review-list" id="report-review-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Canonical offline question bank (window.EPRT_QUIZ_DATA) -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
