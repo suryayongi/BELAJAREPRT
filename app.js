@@ -13,7 +13,7 @@
     return;
   }
 
-  const STORAGE_KEY = "eprt_telu_prep_arena_v1";
+  const STORAGE_KEY = "eprt_telu_prep_arena_v2";
   const THEME_KEY = "eprt_telu_theme_v1";
   const BASELINE = DATA.meta.baseline2023; // { listening: 56, grammar: 49, reading: 53, total: 527 }
   const LETTERS = ["A", "B", "C", "D"];
@@ -45,16 +45,16 @@
     },
     reading: {
       name: "Reading Mastery Sprint",
-      fullCount: 50, // 25 items map proportionally to 50-item Section 3 scale
-      blitzSeconds: 65,
-      examSeconds: 28 * 60,
+      fullCount: 50,
+      blitzSeconds: 66,
+      examSeconds: 55 * 60,
       baseline: BASELINE.reading
     },
     listening: {
       name: "Listening Trap Arena",
-      fullCount: 50, // 20 items map proportionally to 50-item Section 1 scale
+      fullCount: 50,
       blitzSeconds: 45,
-      examSeconds: 0,
+      examSeconds: 35 * 60,
       baseline: BASELINE.listening
     }
   };
@@ -240,24 +240,23 @@
 
     const brandSub = $("brand-sub-count");
     if (brandSub) {
-      brandSub.textContent = `Telkom University · ${grandTotal} Soal Terverifikasi`;
+      brandSub.textContent = `Telkom University · Edisi 2 (${grandTotal} Soal Resmi LaC)`;
     }
 
     const gStructCount = DATA.grammar.filter((q) => q.subtype === "structure").length;
     const gWeCount = DATA.grammar.filter((q) => q.subtype === "written_expression").length;
     const metaG = $("meta-count-grammar");
-    if (metaG) metaG.textContent = `Bank ${gTotal} soal · ${gStructCount}S + ${gWeCount}WE`;
-    const metaR = $("meta-count-reading");
-    if (metaR) metaR.textContent = `Bank ${rPassages} teks · ${rTotal} soal`;
-    const metaL = $("meta-count-listening");
-    if (metaL) metaL.textContent = `Bank ${lTotal} soal · Part A, B, C`;
+    if (metaG) metaG.textContent = `${gTotal} soal resmi · ${gStructCount}S + ${gWeCount}WE`;
 
-    const marG = $("size-marathon-grammar");
-    if (marG) marG.textContent = `Marathon ${gTotal} Soal`;
-    const marR = $("size-marathon-reading");
-    if (marR) marR.textContent = `Marathon ${rPassages} Teks (${rTotal} Soal)`;
-    const marL = $("size-marathon-listening");
-    if (marL) marL.textContent = `Marathon ${lTotal} Soal`;
+    const rPerPassage = rPassages > 0 ? Math.round(rTotal / rPassages) : 0;
+    const metaR = $("meta-count-reading");
+    if (metaR) metaR.textContent = `${rPassages} teks × ${rPerPassage} soal · ${rTotal} soal`;
+
+    const lPartA = DATA.listening.questions.filter((q) => q.part === "A").length;
+    const lPartB = DATA.listening.questions.filter((q) => q.part === "B").length;
+    const lPartC = DATA.listening.questions.filter((q) => q.part === "C").length;
+    const metaL = $("meta-count-listening");
+    if (metaL) metaL.textContent = `${lTotal} soal · ${lPartA}A + ${lPartB}B + ${lPartC}C`;
 
     // Update each section's bank pool status & saved progress card
     ["grammar", "reading", "listening"].forEach((sec) => {
@@ -395,8 +394,14 @@
     if (section === "grammar") {
       const structPool = DATA.grammar.filter((q) => q.subtype === "structure");
       const wePool = DATA.grammar.filter((q) => q.subtype === "written_expression");
-      const targetS = sessionSize === "marathon" ? structPool.length : Math.min(15, structPool.length);
-      const targetW = sessionSize === "marathon" ? wePool.length : Math.min(25, wePool.length);
+      const targetS =
+        sessionSize === "quick"
+          ? Math.min(8, structPool.length)
+          : Math.min(15, structPool.length);
+      const targetW =
+        sessionSize === "quick"
+          ? Math.min(12, wePool.length)
+          : Math.min(25, wePool.length);
       const pickedS = drawPrioritized(structPool, targetS, (q) => seenSet.has(q.id));
       const pickedW = drawPrioritized(wePool, targetW, (q) => seenSet.has(q.id));
       picked = pickedS.concat(pickedW);
@@ -407,7 +412,10 @@
         qByPassage[q.passageId].push(q);
       });
       const validPassages = DATA.reading.passages.filter((p) => (qByPassage[p.id] || []).length > 0);
-      const targetPassages = sessionSize === "marathon" ? validPassages.length : Math.min(3, validPassages.length);
+      const targetPassages =
+        sessionSize === "quick"
+          ? Math.min(2, validPassages.length)
+          : Math.min(5, validPassages.length);
       const isPassageSeen = (p) => (qByPassage[p.id] || []).every((q) => seenSet.has(q.id));
       const pickedPassages = drawPrioritized(validPassages, targetPassages, isPassageSeen);
       // Keep each passage's questions grouped together in passage order
@@ -430,17 +438,34 @@
       const bGroups = Object.keys(bByGroup);
       const cGroups = Object.keys(cByGroup);
 
-      const targetA = sessionSize === "marathon" ? partAPool.length : Math.min(12, partAPool.length);
-      const targetB = sessionSize === "marathon" ? bGroups.length : Math.min(1, bGroups.length);
-      const targetC = sessionSize === "marathon" ? cGroups.length : Math.min(1, cGroups.length);
-
-      const pickedA = drawPrioritized(partAPool, targetA, (q) => seenSet.has(q.id));
-      const pickedBGroups = drawPrioritized(bGroups, targetB, (gid) => bByGroup[gid].every((q) => seenSet.has(q.id)));
-      const pickedCGroups = drawPrioritized(cGroups, targetC, (gid) => cByGroup[gid].every((q) => seenSet.has(q.id)));
-
-      picked = pickedA.slice();
-      pickedBGroups.forEach((gid) => picked.push(...bByGroup[gid]));
-      pickedCGroups.forEach((gid) => picked.push(...cByGroup[gid]));
+      if (sessionSize === "quick") {
+        // Quick 20-question sprint: 1 Part B group + 1 Part C group + remaining Part A to hit 20 exactly
+        const pickedBGroups = drawPrioritized(bGroups, Math.min(1, bGroups.length), (gid) =>
+          bByGroup[gid].every((q) => seenSet.has(q.id))
+        );
+        const pickedCGroups = drawPrioritized(cGroups, Math.min(1, cGroups.length), (gid) =>
+          cByGroup[gid].every((q) => seenSet.has(q.id))
+        );
+        const bItems = [];
+        pickedBGroups.forEach((gid) => bItems.push(...bByGroup[gid]));
+        const cItems = [];
+        pickedCGroups.forEach((gid) => cItems.push(...cByGroup[gid]));
+        const targetA = Math.min(partAPool.length, Math.max(0, 20 - bItems.length - cItems.length));
+        const pickedA = drawPrioritized(partAPool, targetA, (q) => seenSet.has(q.id));
+        picked = pickedA.concat(bItems, cItems);
+      } else {
+        // Full official EPrT LaC Listening: 30 Part A + 10 Part B + 10 Part C = 50 questions
+        const pickedA = drawPrioritized(partAPool, Math.min(30, partAPool.length), (q) => seenSet.has(q.id));
+        const pickedBGroups = drawPrioritized(bGroups, bGroups.length, (gid) =>
+          bByGroup[gid].every((q) => seenSet.has(q.id))
+        );
+        const pickedCGroups = drawPrioritized(cGroups, cGroups.length, (gid) =>
+          cByGroup[gid].every((q) => seenSet.has(q.id))
+        );
+        picked = pickedA.slice();
+        pickedBGroups.forEach((gid) => picked.push(...bByGroup[gid]));
+        pickedCGroups.forEach((gid) => picked.push(...cByGroup[gid]));
+      }
     }
 
     return picked.map(shuffleQuestionOptions);
@@ -467,21 +492,17 @@
     const timerMode = timerPrefs[section] || "blitz";
     const meta = SECTION_META[section];
 
-    // Compute proportional exam duration for Standard vs Marathon vs Missed-only
+    // Compute proportional exam duration for Full EPrT vs Latihan Cepat vs Missed-only
     let examSec = 0;
     if (timerMode === "exam") {
       if (isRetryMissed) {
         examSec = Math.max(60, questions.length * meta.blitzSeconds);
-      } else if (section === "grammar") {
-        examSec = Math.max(60, Math.round((questions.length / 40) * meta.examSeconds));
-      } else if (section === "reading") {
-        examSec = Math.max(60, Math.round((questions.length / 25) * meta.examSeconds));
       } else {
-        examSec = meta.examSeconds;
+        examSec = Math.max(60, Math.round((questions.length / meta.fullCount) * meta.examSeconds));
       }
     }
 
-    // Track ordered passage list for clean "Teks 1/3" badge in Reading
+    // Track ordered passage list for clean "Teks 1/5" badge in Reading
     const passageOrder = [];
     if (section === "reading") {
       questions.forEach((q) => {
@@ -514,9 +535,9 @@
 
     const titleSuffix = isRetryMissed
       ? " (Ulangi Soal Salah)"
-      : sessionSize === "marathon"
-      ? ` (Marathon ${questions.length} Soal)`
-      : "";
+      : sessionSize === "quick"
+      ? ` (Latihan Cepat ${questions.length} Soal)`
+      : ` (Full EPrT ${questions.length} Soal)`;
     $("hud-quiz-name").textContent = meta.name + titleSuffix;
 
     // Configure split-pane for Reading vs single column for Grammar/Listening
@@ -1256,7 +1277,7 @@
       .map(({ ans, q, num }) => {
         const stemText =
           q.subtype === "written_expression"
-            ? q.sentence.replace(/\[([A-D]):([^\]]+)\]/g, "[$1: $2]")
+            ? q.sentence.replace(/\[[A-D]:([^\]]+)\]/g, "[$1]")
             : q.prompt || q.narratorQuestion;
         const yourLabel =
           ans.chosen === -1
